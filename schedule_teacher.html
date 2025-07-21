@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการตารางสอน - ระบบจัดการเรียนการสอน</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #00BA32 0%, #00A02E 50%, #008A2A 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4.5rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-container {
+            padding: 0.5rem;
+        }
+
+        .nav-logo {
+            height: 2.5rem;
+            width: auto;
+            max-width: 200px;
+            object-fit: contain;
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .nav-title {
+            font-size: 1.375rem;
+            font-weight: 700;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .nav-subtitle-mobile {
+            font-size: 0.75rem;
+            color: #6B7280;
+            display: none;
+        }
+
+        .nav-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #00BA32, #00A02E);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-icon {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            padding: 2rem 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .title-icon {
+            width: 3rem;
+            height: 3rem;
+            background: linear-gradient(135deg, #00BA32, #00A02E);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .title-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 2px solid #00BA32;
+            color: #00BA32;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #00BA32;
+            color: white;
+        }
+
+        .back-icon {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Schedule Info */
+        .schedule-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(0, 186, 50, 0.2);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #00BA32;
+        }
+
+        /* Schedule Controls */
+        .schedule-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-button {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .control-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        /* Schedule Table */
+        .schedule-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #E5E7EB;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0.75rem 0.5rem;
+        }
+
+        .time-header {
+            background: linear-gradient(135deg, #374151, #4B5563);
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .day-header {
+            background: linear-gradient(135deg, #6B7280, #9CA3AF);
+            color: white;
+            font-weight: 600;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            width: 80px;
+        }
+
+        .time-slot {
+            background: #F9FAFB;
+            min-height: 60px;
+        }
+
+        .class-slot {
+            background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+            border: 2px solid #3B82F6;
+            color: #1E40AF;
+            font-weight: 600;
+            padding: 0.5rem;
+            position: relative;
+        }
+
+        .class-code {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .class-name {
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+            line-height: 1.2;
+        }
+
+        .class-details {
+            font-size: 0.625rem;
+            color: #374151;
+            line-height: 1.1;
+        }
+
+        .web-tech {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            border-color: #00BA32;
+            color: #065F46;
+        }
+
+        .database {
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            border-color: #F59E0B;
+            color: #92400E;
+        }
+
+        /* Legend */
+        .legend {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .legend-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .legend-text {
+            color: #6B7280;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #F9FAFB;
+            border-radius: 0.5rem;
+            border: 1px solid #E5E7EB;
+        }
+
+        .legend-color {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .legend-color.web-tech {
+            background: linear-gradient(135deg, #00BA32, #00A02E);
+        }
+
+        .legend-color.database {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+
+        .legend-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .footer-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .footer-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .schedule-info {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .schedule-table {
+                font-size: 0.75rem;
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                padding: 0.5rem 0.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .nav-title {
+                display: none;
+            }
+            
+            .nav-subtitle-mobile {
+                display: block;
+            }
+            
+            .nav-badge {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .content-container {
+                padding: 0 1rem;
+                gap: 1.5rem;
+            }
+            
+            .page-header {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .schedule-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .schedule-table {
+                font-size: 0.625rem;
+            }
+            
+            .class-code {
+                font-size: 0.75rem;
+            }
+            
+            .class-name {
+                font-size: 0.625rem;
+            }
+            
+            .class-details {
+                font-size: 0.5rem;
+            }
+            
+            .day-header {
+                writing-mode: horizontal-tb;
+                text-orientation: initial;
+                width: auto;
+                min-width: 60px;
+            }
+            
+            .legend-items {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .footer-contact {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-container {
+                padding: 0 0.5rem;
+            }
+            
+            .page-header {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .title-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                padding: 0.25rem;
+            }
+            
+            .legend {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <div class="logo-container">
+                        <a href="index.html">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mju_logo_main-resize-egDaKYdT5vPMZipTJGemdLxTaHgTTt.png" alt="Maejo University Logo" class="nav-logo">
+                        </a>
+                    </div>
+                    <div class="nav-text">
+                        <span class="nav-title">ระบบจัดการเรียนการสอน</span>
+                        <span class="nav-subtitle-mobile">มหาวิทยาลัยแม่โจ้</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">
+                        <div class="title-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        ตารางสอนอาจารย์
+                    </h1>
+                    <a href="teacher_dashboard.html" class="back-button">
+                        <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15,18 9,12 15,6"></polyline>
+                        </svg>
+                        กลับสู่หน้าหลัก
+                    </a>
+                </div>
+
+                <!-- Schedule Info -->
+                <div class="schedule-info">
+                    <div class="info-item">
+                        <span class="info-label">อาจารย์:</span>
+                        <span class="info-value">อาจารย์ปรีชา บุญรัตน์</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">ปีการศึกษา:</span>
+                        <span class="info-value">2568</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">ภาคเรียน:</span>
+                        <span class="info-value">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">ช่วงเวลา:</span>
+                        <span class="info-value">13/7/2568 - 19/7/2568</span>
+                    </div>
+                </div>
+
+                <!-- Schedule Controls -->
+                <div class="schedule-controls">
+                    <a href="#" class="control-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15,18 9,12 15,6"></polyline>
+                        </svg>
+                    </a>
+                    <span class="control-text" style="color: black;">สัปดาห์ที่ 1</span>
+                    <a href="#" class="control-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Schedule Table -->
+            <div class="schedule-container">
+                <div class="table-wrapper">
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th class="time-header">วัน/เวลา</th>
+                                <th class="time-header">8:00-9:00</th>
+                                <th class="time-header">9:00-10:00</th>
+                                <th class="time-header">10:00-11:00</th>
+                                <th class="time-header">11:00-12:00</th>
+                                <th class="time-header">12:00-13:00</th>
+                                <th class="time-header">13:00-14:00</th>
+                                <th class="time-header">14:00-15:00</th>
+                                <th class="time-header">15:00-16:00</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Monday -->
+                            <tr>
+                                <td class="day-header">จันทร์</td>
+                                <td class="time-slot"></td>
+                                <td class="class-slot web-tech" colspan="3">
+                                    <div class="class-code">10301231</div>
+                                    <div class="class-name">เว็บเทคโนโลยี</div>
+                                    <div class="class-details">(3) กลุ่ม 1<br>Lab คอม3-4<br>อาคาร 105</div>
+                                </td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                            </tr>
+                            <!-- Tuesday -->
+                            <tr>
+                                <td class="day-header">อังคาร</td>
+                                <td class="class-slot web-tech" colspan="2">
+                                    <div class="class-code">10301231</div>
+                                    <div class="class-name">เว็บเทคโนโลยี</div>
+                                    <div class="class-details">(3) กลุ่ม 1<br>Lab คอม3-4<br>อาคาร 105</div>
+                                </td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                            </tr>
+                            <!-- Wednesday -->
+                            <tr>    
+                                <td class="day-header">พุธ</td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                            </tr>
+                            <!-- Thursday -->
+                            <tr>
+                                <td class="day-header">พฤหัสบดี</td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="class-slot database" colspan="2">
+                                    <div class="class-code">10301223</div>
+                                    <div class="class-name">ฐานข้อมูลโครงสร้างเชิงสัมพันธ์</div>
+                                    <div class="class-details">(3) กลุ่ม 1<br>Lab คอม3-4<br>อาคาร 105</div>
+                                </td>
+                                <td class="time-slot"></td>
+                            </tr>
+                            <!-- Friday -->
+                            <tr>
+                                <td class="day-header">ศุกร์</td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="time-slot"></td>
+                                <td class="class-slot database" colspan="3">
+                                    <div class="class-code">10301223</div>
+                                    <div class="class-name">ฐานข้อมูลโครงสร้างเชิงสัมพันธ์</div>
+                                    <div class="class-details">(3) กลุ่ม 1<br>Lab คอม3-4<br>อาคาร 105</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <h3 class="legend-title">คำอธิบาย</h3>
+                <p class="legend-text">
+                    * ข้อมูลที่ปรากฎอยู่ในตารางเรียนประกอบด้วย รหัสวิชา (จำนวนหน่วยกิต) กลุ่ม, ห้องเรียนและอาคาร ตามลำดับ
+                </p>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color web-tech"></div>
+                        <div>
+                            <div class="legend-label">10301231 - เว็บเทคโนโลยี</div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">3 หน่วยกิต | Lab คอม3-4</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color database"></div>
+                        <div>
+                            <div class="legend-label">10301223 - ฐานข้อมูลโครงสร้างเชิงสัมพันธ์</div>
+                            <div style="font-size: 0.875rem; color: #6B7280;">3 หน่วยกิต | Lab คอม3-4</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #E5E7EB;">
+                    <p style="color: #6B7280; font-size: 0.875rem;">
+                        <strong>อีเมล:</strong> <a href="mailto:attawit@mju.ac.th" style="color: #00BA32;">attawit@mju.ac.th</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p class="footer-title">© 2024 มหาวิทยาลัยแม่โจ้</p>
+                    <p class="footer-subtitle">ระบบจัดการเรียนการสอนออนไลน์</p>
+                </div>
+                <div class="footer-contact">
+                    <div class="contact-item">
+                        <span>📞</span>
+                        <span>053-XXX-XXXX</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>✉️</span>
+                        <span>support@mju.ac.th</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

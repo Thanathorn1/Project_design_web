@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ปฏิทินการศึกษา - ระบบจัดการเรียนการสอน มหาวิทยาลัยแม่โจ้</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #00BA32 0%, #00A02E 50%, #008A2A 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(59,130,246,0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: backgroundFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes backgroundFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4.5rem;
+            gap: 1rem;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .logo-container {
+            padding: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .nav-logo {
+            height: 2.5rem;
+            width: auto;
+            max-width: 150px;
+            object-fit: contain;
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .nav-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #374151;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-subtitle {
+            font-size: 0.875rem;
+            color: #6B7280;
+            display: none;
+        }
+
+        .nav-subtitle-mobile {
+            font-size: 0.75rem;
+            color: #6B7280;
+            display: block;
+        }
+
+        .nav-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .nav-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+            white-space: nowrap;
+        }
+
+        .badge-icon {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            text-decoration: none;
+            color: white;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .back-icon {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: #374151;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            padding: 2rem 0;
+        }
+
+        .content-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            color: white;
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        @keyframes slideInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-content {
+            flex: 1;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, white, rgba(255, 255, 255, 0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5)); }
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .label-icon {
+            width: 1rem;
+            height: 1rem;
+            color: #8B5CF6;
+        }
+
+        .form-select {
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .year-navigation {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+        }
+
+        .nav-button {
+            padding: 0.5rem;
+            background: #8B5CF6;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-button:hover {
+            background: #7C3AED;
+            transform: scale(1.05);
+        }
+
+        .nav-button:active {
+            transform: scale(0.95);
+        }
+
+        .current-year {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #8B5CF6;
+            padding: 0 1rem;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .semester-tabs {
+            display: flex;
+            gap: 0.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 0.75rem;
+            padding: 0.25rem;
+        }
+
+        .semester-tab {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6B7280;
+            transition: all 0.3s ease;
+        }
+
+        .semester-tab:hover {
+            background: rgba(139, 92, 246, 0.2);
+            color: #8B5CF6;
+        }
+
+        .semester-tab.active {
+            background: #8B5CF6;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Calendar Section */
+        .calendar-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .title-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: #8B5CF6;
+        }
+
+        /* Table Container for Mobile Scroll */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .calendar-table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .calendar-table th {
+            background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .calendar-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #E5E7EB;
+            vertical-align: top;
+        }
+
+        .calendar-table tr:nth-child(even) td {
+            background: #F8FAFC;
+        }
+
+        .calendar-table tr:hover td {
+            background: #EEF2FF;
+            transform: scale(1.01);
+        }
+
+        .event-item {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.25rem;
+            padding: 0.25rem 0;
+        }
+
+        .event-item.main {
+            color: #8B5CF6;
+            font-weight: 600;
+            font-size: 1.05em;
+            border-left: 4px solid #8B5CF6;
+            padding-left: 0.75rem;
+        }
+
+        .event-item.sub {
+            color: #6B7280;
+            font-size: 0.875rem;
+            margin-left: 1rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid #E5E7EB;
+        }
+
+        .date-cell {
+            text-align: center;
+            font-weight: 500;
+            color: #374151;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .date-range {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .start-date {
+            color: #10B981;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 0.375rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .end-date {
+            color: #EF4444;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 0.375rem;
+        }
+
+        /* Important Events */
+        .important-events {
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            border: 1px solid #F59E0B;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .important-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #92400E;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .important-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .important-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .important-item:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .important-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #F59E0B;
+            flex-shrink: 0;
+        }
+
+        .important-text {
+            font-weight: 500;
+            color: #92400E;
+        }
+
+        /* Search and Filter */
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-button {
+            padding: 0.75rem 1.5rem;
+            background: #8B5CF6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: #7C3AED;
+            transform: translateY(-1px);
+        }
+
+        /* Export Button */
+        .export-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .export-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .export-icon {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+            gap: 2rem;
+        }
+
+        .footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .footer-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .footer-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .footer-contact {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-spinner {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid #E5E7EB;
+            border-top: 4px solid #8B5CF6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .important-list {
+                grid-template-columns: 1fr;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            
+            .nav-title {
+                font-size: 1rem;
+            }
+            
+            .nav-subtitle {
+                display: block;
+                font-size: 0.75rem;
+            }
+            
+            .nav-subtitle-mobile {
+                display: none;
+            }
+            
+            .nav-info {
+                gap: 0.5rem;
+            }
+
+            .nav-badge {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+
+            .back-button {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .content-container {
+                padding: 0 1rem;
+                gap: 1.5rem;
+            }
+            
+            .page-header {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filter-section,
+            .calendar-section {
+                padding: 1.5rem;
+            }
+            
+            .calendar-table {
+                font-size: 0.875rem;
+            }
+            
+            .calendar-table th,
+            .calendar-table td {
+                padding: 0.75rem 0.5rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .footer-contact {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-container {
+                padding: 0 0.5rem;
+            }
+            
+            .page-header {
+                padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .calendar-section {
+                padding: 1rem;
+            }
+            
+            .calendar-table {
+                font-size: 0.75rem;
+                min-width: 600px;
+            }
+            
+            .calendar-table th,
+            .calendar-table td {
+                padding: 0.5rem 0.25rem;
+            }
+
+            .year-navigation {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .semester-tabs {
+                flex-direction: column;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .calendar-table {
+                border: 2px solid #000;
+            }
+            
+            .calendar-table th {
+                background: #000;
+                color: #fff;
+            }
+        }
+
+        /* Reduced motion support */    
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .navbar, .footer, .back-button, .mobile-menu-btn {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+            }
+            
+            .calendar-section {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+        @media (max-width: 768px) {
+            .calendar-table {
+                min-width: auto !important;
+                width: 100%;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .calendar-table {
+                min-width: auto !important;
+                width: 100%;
+                font-size: 0.7rem;
+            }
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <div class="logo-container">
+                        <a href="index.html">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mju_logo_main-resize-egDaKYdT5vPMZipTJGemdLxTaHgTTt.png" alt="Maejo University Logo" class="nav-logo">
+                        </a>
+                    </div>
+                    <div class="nav-text">
+                        <span class="nav-title">ระบบจัดการเรียนการสอน</span>
+                        <span class="nav-subtitle">สาขาวิชาวิทยาการคอมพิวเตอร์</span>
+                        <span class="nav-subtitle-mobile">มหาวิทยาลัยแม่โจ้</span>
+                    </div>
+                </div>
+
+                <div class="nav-info">
+                    <div class="nav-badge">
+                        <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>ปฏิทินการศึกษา</span>
+                    </div>
+
+                    <a href="student_schedule.html" class="back-button">
+                        <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15,18 9,12 15,6"></polyline>
+                        </svg>
+                        <span class="hidden sm:inline">กลับ</span>
+                    </a>
+
+                    <button class="mobile-menu-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">ปฏิทินการศึกษา</h1>
+                    <p class="page-subtitle">ตารางกิจกรรมและวันสำคัญในปีการศึกษา</p>
+                </div>
+                <button class="export-button" onclick="exportCalendar()">
+                    <svg class="export-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7,10 12,15 17,10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    ส่งออก PDF
+                </button>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <svg class="label-icon" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"></path>
+                            </svg>
+                            ชุดปฏิทิน
+                        </label>
+                        <select class="form-select" id="calendarSet">
+                            <option value="1000" selected>1000 : วิทยาลัยบริหารศาสตร์</option>
+                            <option value="1001">1001 : ปริญญาตรี ปกติ</option>
+                            <option value="1002">1002 : ปริญญาตรี สมทบ</option>
+                            <option value="1003">1003 : ปริญญาตรี ภาคปกติ วิทยาเขตฯ</option>
+                            <option value="2001">2001 : บัณฑิตศึกษา ปกติ</option>
+                            <option value="2002">2002 : บัณฑิตศึกษา สมทบ</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            ปีการศึกษา
+                        </label>
+                        <div class="year-navigation">
+                            <button class="nav-button" onclick="changeYear(-1)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15,18 9,12 15,6"></polyline>
+                                </svg>
+                            </button>
+                            <span class="current-year" id="currentYear">2568</span>
+                            <button class="nav-button" onclick="changeYear(1)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9,18 15,12 9,6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <svg class="label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                            ภาคเรียน
+                        </label>
+                        <div class="semester-tabs">
+                            <button class="semester-tab active" onclick="changeSemester(1)">1</button>
+                            <button class="semester-tab" onclick="changeSemester(2)">2</button>
+                            <button class="semester-tab" onclick="changeSemester(3)">3</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Section -->
+            <div class="calendar-section">
+                <!-- Search Container -->
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="ค้นหากิจกรรม..." id="searchInput">
+                    <button class="search-button" onclick="searchEvents()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        ค้นหา
+                    </button>
+                </div>
+
+                <h2 class="section-title">
+                    <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span id="sectionTitle">ปฏิทินการศึกษา ปีการศึกษา 2568 ภาคเรียนที่ 1</span>
+                </h2>
+
+                <div class="table-container">
+                    <table class="calendar-table" id="calendarTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">รายการ</th>
+                                <th style="width: 25%;">วันเริ่มต้น</th>
+                                <th style="width: 25%;">วันสุดท้าย</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendarBody">
+                            <tr>
+                                <td>
+                                    <div class="event-item main">ลงทะเบียนปกติ (on-line)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">17 มิ.ย. 2568<br>0:01 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">20 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ชั้นปี 1 (ตามรหัสปีเข้า)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">18 มิ.ย. 2568<br>0:01 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">18 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ชั้นปี 2 (ตามรหัสปีเข้า)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">19 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">19 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ชั้นปี 3 (ตามรหัสปีเข้า)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">20 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">20 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ชั้นปี 4 (ตามรหัสปีเข้า)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">20 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">20 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">วันเปิดภาคการศึกษา</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">23 มิ.ย. 2568<br>8:00 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">23 มิ.ย. 2568<br>8:00 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">ลงทะเบียนเพิ่ม/ลด/เปลี่ยนกลุ่ม (on-line)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">23 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">25 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ช่วงวันทำการเพิ่มรายวิชา</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">23 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">25 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ช่วงวันทำการลดรายวิชา</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">23 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">25 มิ.ย. 2568<br>23:59 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">งวดชำระเงินตามปกติ</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">30 มิ.ย. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">6 ก.ค. 2568<br>20:00 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">วันไหว้ครู</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">24 ก.ค. 2568<br>8:00 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">24 ก.ค. 2568<br>16:30 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">ช่วงวันสอบกลางภาค</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">18 ส.ค. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">24 ส.ค. 2568<br>16:30 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- ช่วงวันทำการถอนรายวิชา (ติด W)</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">7 ก.ค. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">9 ก.ย. 2568<br>16:00 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">วันสุดท้ายของการเรียนการสอน</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">12 ต.ค. 2568<br>8:00 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">12 ต.ค. 2568<br>16:30 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">ช่วงวันสอบปลายภาค</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">14 ต.ค. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">27 ต.ค. 2568<br>16:30 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item main">วันปิดภาคการศึกษา</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">28 ต.ค. 2568<br>8:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">28 ต.ค. 2568<br>16:30 น.</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="event-item sub">- วันประกาศผลการศึกษา</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="start-date">7 พ.ย. 2568<br>16:30 น.</div>
+                                </td>
+                                <td class="date-cell">
+                                    <div class="end-date">7 พ.ย. 2568<br>23:30 น.</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Important Events -->
+                <div class="important-events">
+                    <h3 class="important-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        วันสำคัญที่ต้องจำ
+                    </h3>
+                    <div class="important-list">
+                        <div class="important-item" onclick="highlightEvent('ลงทะเบียน')">
+                            <svg class="important-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11H1v12h8V11z"></path>
+                                <path d="M23 11h-8v12h8V11z"></path>
+                                <path d="M15 7h-6v4h6V7z"></path>
+                            </svg>
+                            <span class="important-text">ลงทะเบียน: 17-20 มิ.ย. 2568</span>
+                        </div>
+                        <div class="important-item" onclick="highlightEvent('ชำระเงิน')">
+                            <svg class="important-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            <span class="important-text">ชำระเงิน: 30 มิ.ย. - 6 ก.ค. 2568</span>
+                        </div>
+                        <div class="important-item" onclick="highlightEvent('สอบกลางภาค')">
+                            <svg class="important-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <span class="important-text">สอบกลางภาค: 18-24 ส.ค. 2568</span>
+                        </div>
+                        <div class="important-item" onclick="highlightEvent('สอบปลายภาค')">
+                            <svg class="important-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <span class="important-text">สอบปลายภาค: 14-27 ต.ค. 2568</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p class="footer-title">© 2025 มหาวิทยาลัยแม่โจ้</p>
+                    <p class="footer-subtitle">ระบบจัดการเรียนการสอนออนไลน์</p>
+                </div>
+                <div class="footer-contact">
+                    <div class="contact-item">
+                        <span>📞</span>
+                        <span>053-873890-3</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>✉️</span>
+                        <span>cs@mju.ac.th</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>กำลังโหลดข้อมูล...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentYear = 2568;
+            let currentSemester = 1;
+
+            // Year navigation
+            window.changeYear = function(direction) {
+                currentYear += direction;
+                document.getElementById('currentYear').textContent = currentYear;
+                updateSectionTitle();
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    // Here you would typically fetch new data
+                }, 1000);
+            };
+
+            // Semester navigation
+            window.changeSemester = function(semester) {
+                currentSemester = semester;
+                
+                // Update active tab
+                document.querySelectorAll('.semester-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                
+                updateSectionTitle();
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    // Here you would typically fetch new data
+                }, 1000);
+            };
+
+            // Update section title
+            function updateSectionTitle() {
+                const title = `ปฏิทินการศึกษา ปีการศึกษา ${currentYear} ภาคเรียนที่ ${currentSemester}`;
+                document.getElementById('sectionTitle').textContent = title;
+            }
+
+            // Search functionality
+            window.searchEvents = function() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const rows = document.querySelectorAll('#calendarBody tr');
+                
+                rows.forEach(row => {
+                    const eventText = row.querySelector('.event-item').textContent.toLowerCase();
+                    if (eventText.includes(searchTerm) || searchTerm === '') {
+                        row.style.display = '';
+                        row.style.backgroundColor = searchTerm && eventText.includes(searchTerm) ? '#FEF3C7' : '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            };
+
+            // Real-time search
+            document.getElementById('searchInput').addEventListener('input', function() {
+                window.searchEvents();
+            });
+
+            // Highlight event
+            window.highlightEvent = function(eventType) {
+                const rows = document.querySelectorAll('#calendarBody tr');
+                
+                // Reset all highlights
+                rows.forEach(row => {
+                    row.style.backgroundColor = '';
+                });
+                
+                // Highlight matching events
+                rows.forEach(row => {
+                    const eventText = row.querySelector('.event-item').textContent.toLowerCase();
+                    if (eventText.includes(eventType.toLowerCase())) {
+                        row.style.backgroundColor = '#FEF3C7';
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            };
+
+            // Export functionality
+            window.exportCalendar = function() {
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    // Simulate PDF generation
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.download = `ปฏิทินการศึกษา_${currentYear}_ภาคเรียนที่${currentSemester}.pdf`;
+                    
+                    // Show success message
+                    alert('ส่งออกไฟล์ PDF เรียบร้อยแล้ว');
+                }, 2000);
+            };
+
+            // Loading functions
+            function showLoading() {
+                document.getElementById('loadingOverlay').classList.add('active');
+            }
+
+            function hideLoading() {
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }
+
+            // Calendar set change handler
+            document.getElementById('calendarSet').addEventListener('change', function() {
+                showLoading();
+                
+                setTimeout(() => {
+                    hideLoading();
+                    // Here you would typically fetch new data based on selected calendar set
+                }, 1000);
+            });
+
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('#calendarBody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.01)';
+                    this.style.zIndex = '10';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.zIndex = '';
+                });
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'f':
+                            e.preventDefault();
+                            document.getElementById('searchInput').focus();
+                            break;
+                        case 'e':
+                            e.preventDefault();
+                            exportCalendar();
+                            break;
+                    }
+                }
+            });
+
+            // Add animation to important events
+            const importantItems = document.querySelectorAll('.important-item');
+            importantItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+                item.classList.add('animate-slide-up');
+            });
+
+            // Responsive table handling
+            function handleResponsiveTable() {
+                const table = document.querySelector('.calendar-table');
+                const container = document.querySelector('.table-container');
+                
+                if (window.innerWidth < 768) {
+                    container.style.overflowX = 'auto';
+                    table.style.minWidth = '800px';
+                } else {
+                    container.style.overflowX = 'visible';
+                    table.style.minWidth = 'auto';
+                }
+            }
+
+            window.addEventListener('resize', handleResponsiveTable);
+            handleResponsiveTable();
+
+            // Initialize tooltips for mobile
+            if ('ontouchstart' in window) {
+                const eventItems = document.querySelectorAll('.event-item');
+                eventItems.forEach(item => {
+                    item.addEventListener('touchstart', function() {
+                        this.style.backgroundColor = 'rgba(139, 92, 246, 0.1)';
+                    });
+                    
+                    item.addEventListener('touchend', function() {
+                        setTimeout(() => {
+                            this.style.backgroundColor = '';
+                        }, 200);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
